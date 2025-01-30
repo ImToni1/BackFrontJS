@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prijava</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #008080, #4b0082);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #fff;
+    }
+    .container {
+      background-color: #222;
+      padding: 20px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 350px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    h2 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 15px;
+    }
+    label {
+      font-size: 13px;
+      color: #ddd;
+      margin-bottom: 5px;
+      display: block;
+    }
+    input {
+      width: 90%; 
+      padding: 10px;
+      margin: 8px auto; 
+      border-radius: 6px;
+      border: 1px solid #444;
+      background-color: #333;
+      color: #fff;
+      font-size: 13px;
+      display: block;
+    }
+    input:focus {
+      border-color: #66cc66;
+      outline: none;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .error {
+      color: #ff6347;
+      font-size: 14px;
+      text-align: center;
+      display: none;
+    }
+    .register-btn {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .register-btn a {
+      color: #66cc66;
+      text-decoration: none;
+    }
+    .register-btn a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Prijavite se</h2>
+  <form id="login-form">
+    <label for="email">Email:</label>
+    <input type="email" id="email" required><br>
+    <label for="lozinka">Lozinka:</label>
+    <input type="password" id="lozinka" required><br>
+    <button type="submit">Prijavi se</button>
+  </form>
+
+  <div id="error-message" class="error">
+    Neispravni podaci za prijavu!
+  </div>
+
+  <div class="register-btn">
+    <button onclick="window.location.href='/registracija'">Nema račun? Registrirajte se!</button>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('login-form');
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const lozinka = document.getElementById('lozinka').value;
+
+    const errorMessage = document.getElementById('error-message');
+
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, lozinka })
+      });
+
+      if (response.status === 200) {
+        const data = await response.text(); 
+        if (email=="admin@admin.com" && lozinka=="admin") {
+          window.location.href = '/admin';
+        } else {
+          window.location.href = '/proizvodi'; 
+        }
+      } else if (response.status === 404) {
+        errorMessage.textContent = 'Račun ne postoji.';
+        errorMessage.style.display = 'block';
+      } else if (response.status === 401) {
+        errorMessage.textContent = 'Neispravna lozinka.';
+        errorMessage.style.display = 'block';
+      } else {
+        errorMessage.textContent = 'Pogreška pri prijavi. Pokušajte kasnije.';
+        errorMessage.style.display = 'block';
+      }
+    } catch (error) {
+      console.error('Greška:', error);
+      errorMessage.textContent = 'Došlo je do greške. Pokušajte kasnije.';
+      errorMessage.style.display = 'block';
+    }
+
+    setTimeout(() => errorMessage.style.display = 'none', 3000);
+  });
+</script>
+</body>
+</html>

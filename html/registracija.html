@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registracija</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #008080, #4b0082);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #fff;
+    }
+    .container {
+      background-color: #222;
+      padding: 20px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 350px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    h2 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 15px;
+    }
+    label {
+      font-size: 13px;
+      color: #ddd;
+      margin-bottom: 5px;
+      display: block;
+    }
+    input {
+      width: 90%; 
+      padding: 10px;
+      margin: 8px auto; 
+      border-radius: 6px;
+      border: 1px solid #444;
+      background-color: #333;
+      color: #fff;
+      font-size: 13px;
+      display: block;
+    }
+    input:focus {
+      border-color: #66cc66;
+      outline: none;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .error {
+      color: #ff6347;
+      font-size: 14px;
+      text-align: center;
+      display: none;
+    }
+    .success {
+      color: #66cc66;
+      font-size: 14px;
+      text-align: center;
+      display: none;
+    }
+    .login-btn {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .login-btn a {
+      color: #66cc66;
+      text-decoration: none;
+    }
+    .login-btn a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Registracija</h2>
+    <form id="registration-form">
+      <label for="ime">Ime:</label>
+      <input type="text" id="ime" required><br>
+
+      <label for="prezime">Prezime:</label>
+      <input type="text" id="prezime" required><br>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" required><br>
+
+      <label for="lozinka">Lozinka:</label>
+      <input type="password" id="lozinka" required><br>
+
+      <button type="submit">Registriraj se</button>
+    </form>
+
+    <div id="error-message" class="error">
+      Došlo je do pogreške pri registraciji!
+    </div>
+
+    <div id="success-message" class="success">
+      Registracija uspješna! Možete se prijaviti.
+    </div>
+
+    <div class="login-btn">
+      <button onclick="window.location.href='/login'">Već imate račun? Prijavite se!</button>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('registration-form');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const ime = document.getElementById('ime').value;
+      const prezime = document.getElementById('prezime').value;
+      const email = document.getElementById('email').value;
+      const lozinka = document.getElementById('lozinka').value;
+
+      const response = await fetch('/api/korisnici', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ime, prezime, email, lozinka })
+      });
+
+      const errorMessage = document.getElementById('error-message');
+      const successMessage = document.getElementById('success-message');
+
+      if (response.status === 201) {
+        successMessage.style.display = 'block';
+        setTimeout(() => {
+          window.location.href = '/proizvodi '; 
+        }, 2000);
+      } else {
+        errorMessage.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
